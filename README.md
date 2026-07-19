@@ -23,7 +23,7 @@ This project was built using the **AI4I 2020 Predictive Maintenance Dataset** an
 
 ## 📂 Project Structure
 ```text
-Utsav_Singh_PBEL3.0/
+InfosysSpringBoard/
 ├── data/
 │   └── ai4i2020.csv                    # The training dataset
 ├── code/
