@@ -1,247 +1,87 @@
-# 🚀 AI-Powered Predictive Maintenance System
+# 🏭 Predictive Maintenance System using AI
 
-> Predict. Prevent. Perform.
+[![Python Version](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-Web%20Framework-lightgrey.svg)](https://flask.palletsprojects.com/)
+[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-Machine%20Learning-orange.svg)](https://scikit-learn.org/)
 
-An AI-driven predictive maintenance platform that leverages Industrial IoT (IIoT), Machine Learning, and Real-Time Monitoring to predict equipment failures before they occur, enabling proactive maintenance and minimizing operational downtime. :contentReference[oaicite:0]{index=0}
+## 📖 Overview
+The **Predictive Maintenance System** is an end-to-end Machine Learning pipeline and web application designed to predict industrial machine failures before they occur. By analyzing live sensor telemetry (such as torque, rotational speed, and temperature), the system shifts maintenance strategies from reactive to proactive, minimizing downtime and saving operational costs.
 
----
+This project was built using the **AI4I 2020 Predictive Maintenance Dataset** and features a highly accurate **Random Forest Classifier** optimized for severely imbalanced real-world data, paired with a custom Flask backend and a dynamic HTML5 waveform visualization UI.
 
-## 📌 Project Overview
+## ✨ Key Features
+*   **Robust ML Pipeline:** Handles imbalanced datasets using stratified splitting and balanced class weights to maximize the F1-Score for critical failure prediction.
+*   **Real-time Inference API:** A Flask-based backend that loads serialized models (`.joblib`) to scale and process new sensor data instantly.
+*   **Dynamic Visual UI:** A custom frontend featuring an HTML5 Canvas that renders a live, animated sensor wave. The wave dynamically reacts to the machine's predicted state (Normal vs. Failure).
+*   **Feature Importance Analysis:** Explains the "why" behind the AI's decisions by identifying which sensors drive the failure predictions.
 
-Traditional maintenance approaches either wait for failures or rely on fixed maintenance schedules, leading to increased downtime, unnecessary maintenance costs, and reduced equipment lifespan.
+## 🛠️ Technology Stack
+*   **Core Logic:** Python
+*   **Data Science & ML:** Pandas, NumPy, Scikit-Learn, Matplotlib, Seaborn
+*   **Backend API:** Flask
+*   **Frontend UI:** HTML5, CSS3, JavaScript (Canvas API)
 
-Our solution combines IoT sensor data with Machine Learning models to continuously monitor industrial equipment, predict Remaining Useful Life (RUL), detect anomalies, and generate intelligent maintenance alerts in real time. :contentReference[oaicite:1]{index=1}
-
----
-
-## 🎯 Objectives
-
-- Predict machine failures before they occur
-- Reduce unplanned downtime
-- Optimize maintenance schedules
-- Increase equipment lifespan
-- Enable real-time monitoring
-- Improve operational efficiency
-
----
-
-## ⚙️ Features
-
-- 📡 Real-time IoT sensor monitoring
-- 🤖 Machine Learning-based failure prediction
-- 📈 Remaining Useful Life (RUL) estimation
-- 🚨 Smart anomaly detection
-- 🔔 Intelligent alert system
-- 📊 Interactive dashboard
-- 📉 Equipment health visualization
-- 🔄 Continuous model retraining
-
----
-
-## 🏗️ System Architecture
-
-```
-IoT Sensors
-      │
-      ▼
-Data Ingestion (Kafka / MQTT)
-      │
-      ▼
-Processing Layer
-(Spark / Flink)
-      │
-      ▼
-Machine Learning Models
-      │
-      ▼
-Prediction Engine
-      │
-      ▼
-Dashboard & Alerts
-```
-
-The system follows a modular architecture with dedicated layers for data ingestion, processing, machine learning inference, and visualization to ensure scalability and fault tolerance. :contentReference[oaicite:2]{index=2}
-
----
-
-## 🛠️ Tech Stack
-
-### Backend
-
-- Python
-- Flask / FastAPI *(depending on implementation)*
-
-### Machine Learning
-
-- Scikit-learn
-- TensorFlow
-- XGBoost
-- Random Forest
-- LSTM
-
-### Data Processing
-
-- Apache Kafka
-- MQTT
-- Apache Spark
-- Apache Flink
-
-### Frontend
-
-- React.js
-- WebSocket
-- Firebase
-
-### Database
-
-- Time-Series Database
-
-### Notifications
-
-- Email
-- Slack
-- SMS
-
-Based on the proposed implementation architecture. :contentReference[oaicite:3]{index=3}
-
----
-
-## 📂 Datasets
-
-The project uses publicly available benchmark datasets for predictive maintenance:
-
-- NASA C-MAPSS Turbofan Dataset
-- AI4I 2020 Predictive Maintenance Dataset
-- CWRU Bearing Dataset
-- Azure Predictive Maintenance Dataset
-
-Future deployments can integrate proprietary SCADA and IoT historian data for continuous learning. :contentReference[oaicite:4]{index=4}
-
----
-
-## 🤖 Machine Learning Pipeline
-
-1. Data Collection
-2. Data Preprocessing
-3. Feature Engineering
-4. Model Training
-5. RUL Prediction
-6. Anomaly Detection
-7. Real-Time Inference
-8. Continuous Retraining
-
-The pipeline combines feature engineering, supervised learning, anomaly detection, and feedback-driven retraining to adapt to changing equipment conditions. :contentReference[oaicite:5]{index=5}
-
----
-
-## 📊 Expected Benefits
-
-- Reduce unplanned downtime
-- Lower maintenance costs
-- Improve operational efficiency
-- Increase equipment lifespan
-- Enable predictive maintenance decisions
-
-The project targets measurable business improvements such as reduced downtime and maintenance costs while improving asset longevity. :contentReference[oaicite:6]{index=6}
-
----
-
-## 📁 Repository Structure
-
-```
-InfosysSpringBoard-Team-D
-│
-├── backend/
-├── frontend/
+## 📂 Project Structure
+```text
+InfosysSpringBoard/
+├── data/
+│   └── ai4i2020.csv                    # The training dataset
+├── code/
+│   ├── templates/
+│   │   └── index.html                  # Frontend web interface
+│   ├── predictive_maintenance.ipynb    # ML training and EDA notebook
+│   └── app.py                          # Flask application server
 ├── models/
-├── datasets/
-├── notebooks/
-├── docs/
-├── images/
-├── tests/
-├── requirements.txt
-├── README.md
-└── .gitignore
-```
+│   ├── predictive_maintenance_rf.joblib # Serialized Random Forest model
+│   └── scaler.joblib                   # Serialized Standard Scaler
+├── .gitignore
+└── README.md
+🚀 Installation and Setup
+To run this project locally, follow these steps:
 
----
+1. Clone the repository:
 
-## 👥 Team
+Bash
+git clone [https://github.com/Utsav006/Utsav_Singh_PBEL3.0.git](https://github.com/Utsav006/Utsav_Singh_PBEL3.0.git)
+cd Utsav_Singh_PBEL3.0
+2. Create and activate a virtual environment:
 
-| Name | Role |
-|------|------|
-| Member 1 | Team Lead / AI Developer |
-| Member 2 | Backend Developer |
-| Member 3 | Frontend Developer |
-| Member 4 | ML Engineer |
+Bash
+# Windows
+python -m venv venv
+venv\Scripts\activate
 
-*(Update with your actual team members.)*
+# macOS/Linux
+python3 -m venv venv
+source venv/bin/activate
+3. Install the required dependencies:
 
----
+Bash
+pip install pandas numpy scikit-learn matplotlib seaborn flask joblib
+4. Launch the web application:
 
-## 🚀 Getting Started
-
-### Clone Repository
-
-```bash
-git clone https://github.com/Charankumm/InfosysSpringBoard-Team-D.git
-```
-
-### Navigate
-
-```bash
-cd InfosysSpringBoard-Team-D
-```
-
-### Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### Run Application
-
-```bash
+Bash
+cd code
 python app.py
-```
+5. Access the UI:
+Open your web browser and navigate to: http://127.0.0.1:5000
 
+🧪 Testing the Model
+To see the failure alert and dynamic red waveform in action, input the following parameters into the UI. These values simulate a Power Failure (abnormally high speed, abnormally low torque):
 
+Machine Quality Type: Low (L)
 
----
+Air Temperature [K]: 298.9
 
-## 🌱 Future Enhancements
+Process Temperature [K]: 309.1
 
-- Federated Learning
-- Digital Twin Integration
-- Edge AI Deployment
-- Prescriptive Maintenance
-- Cloud Deployment
-- Mobile Monitoring Application
+Rotational Speed [rpm]: 2861
 
-The project roadmap envisions expanding from predictive maintenance toward enterprise-scale, prescriptive intelligence. :contentReference[oaicite:7]{index=7}
+Torque [Nm]: 4.6
 
----
+Tool Wear [min]: 143
 
-## 🤝 Contributing
+👨‍💻 Author
+Utsav Singh
 
-1. Create a feature branch
-2. Commit your changes
-3. Push your branch
-4. Create a Pull Request
-5. Review and Merge
-
----
-
-## 📄 License
-
-This project is developed as part of the **Infosys Springboard Internship Program** for educational and learning purposes.
-
----
-
-## ⭐ Acknowledgements
-
-- Infosys Springboard
-- NASA Prognostics Data Repository
-- UCI Machine Learning Repository
-- Microsoft Azure Predictive Maintenance Dataset
-- Case Western Reserve University Bearing Data Center
+GitHub: @Utsav006
