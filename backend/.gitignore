@@ -1,0 +1,37 @@
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# Python cache & bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# Trained ML Models & Encoders
+*.pkl
+*.joblib
+*.h5
+*.onnx
+
+# Datasets
+*.xlsx
+
+# Environment Variables & Secrets
+.env
+.env.local
+
+# IDE / Editor config
+.vscode/
+.idea/
+*.swp
+
+# Frontend Dependencies & Builds (if applicable)
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+.DS_Store
