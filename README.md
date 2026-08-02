@@ -1,87 +1,279 @@
-# 🏭 Predictive Maintenance System using AI
+# 🏭 AI-Powered Predictive Maintenance System with Real-Time Monitoring
 
-[![Python Version](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-Web%20Framework-lightgrey.svg)](https://flask.palletsprojects.com/)
-[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-Machine%20Learning-orange.svg)](https://scikit-learn.org/)
+[![Python](https://img.shields.io/badge/Python-3.13-blue.svg)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-Backend-lightgrey.svg)](https://flask.palletsprojects.com/)
+[![React](https://img.shields.io/badge/React-Frontend-61DAFB.svg)](https://react.dev/)
+[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange.svg)](https://scikit-learn.org/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-Model-success.svg)](https://xgboost.readthedocs.io/)
 
-## 📖 Overview
-The **Predictive Maintenance System** is an end-to-end Machine Learning pipeline and web application designed to predict industrial machine failures before they occur. By analyzing live sensor telemetry (such as torque, rotational speed, and temperature), the system shifts maintenance strategies from reactive to proactive, minimizing downtime and saving operational costs.
+---
 
-This project was built using the **AI4I 2020 Predictive Maintenance Dataset** and features a highly accurate **Random Forest Classifier** optimized for severely imbalanced real-world data, paired with a custom Flask backend and a dynamic HTML5 waveform visualization UI.
+# 📖 Overview
 
-## ✨ Key Features
-*   **Robust ML Pipeline:** Handles imbalanced datasets using stratified splitting and balanced class weights to maximize the F1-Score for critical failure prediction.
-*   **Real-time Inference API:** A Flask-based backend that loads serialized models (`.joblib`) to scale and process new sensor data instantly.
-*   **Dynamic Visual UI:** A custom frontend featuring an HTML5 Canvas that renders a live, animated sensor wave. The wave dynamically reacts to the machine's predicted state (Normal vs. Failure).
-*   **Feature Importance Analysis:** Explains the "why" behind the AI's decisions by identifying which sensors drive the failure predictions.
+The **AI-Powered Predictive Maintenance System** is a machine learning and web-based application that predicts industrial machine failures before they occur using sensor data.
 
-## 🛠️ Technology Stack
-*   **Core Logic:** Python
-*   **Data Science & ML:** Pandas, NumPy, Scikit-Learn, Matplotlib, Seaborn
-*   **Backend API:** Flask
-*   **Frontend UI:** HTML5, CSS3, JavaScript (Canvas API)
+The system consists of two AI models:
 
-## 📂 Project Structure
+- **Model 1:** Predicts whether a machine will fail or not.
+- **Model 2:** Identifies the type of failure if a failure is predicted.
+
+The application provides real-time failure prediction through a Flask REST API and a React frontend.
+
+---
+
+# ✨ Features
+
+- Predict machine failure using Machine Learning
+- Predict failure type
+- Real-time prediction through Flask API
+- React frontend for user interaction
+- Trained using AI4I 2020 Predictive Maintenance Dataset
+- Automatic preprocessing using Scikit-Learn Pipeline
+- Supports Random Forest, Gradient Boosting and XGBoost
+- Displays failure probability
+- Warning Status:
+  - 🟢 Healthy
+  - 🟡 Monitor
+  - 🟠 Warning
+  - 🔴 Critical
+
+---
+
+# 🛠 Technology Stack
+
+## Machine Learning
+
+- Python
+- Pandas
+- NumPy
+- Scikit-Learn
+- XGBoost
+- Joblib
+
+## Backend
+
+- Flask
+- Flask-CORS
+
+## Frontend
+
+- React
+- JavaScript
+- HTML
+- CSS
+
+---
+
+# 📂 Project Structure
+
 ```text
-InfosysSpringBoard/
-├── data/
-│   └── ai4i2020.csv                    # The training dataset
-├── code/
-│   ├── templates/
-│   │   └── index.html                  # Frontend web interface
-│   ├── predictive_maintenance.ipynb    # ML training and EDA notebook
-│   └── app.py                          # Flask application server
-├── models/
-│   ├── predictive_maintenance_rf.joblib # Serialized Random Forest model
-│   └── scaler.joblib                   # Serialized Standard Scaler
-├── .gitignore
+Machine_Failure_detection/
+│
+├── backend/
+│   │
+│   ├── flask_application/
+│   │   ├── app.py
+│   │   ├── routes.py
+│   │   └── utils.py
+│   │
+│   ├── models/
+│   │   ├── machine_failure_model.pkl
+│   │   ├── failure_type_model.pkl
+│   │   └── label_encoder.pkl
+│   │
+│   ├── model_tranning/
+│   │   ├── ai4i2020.csv
+│   │   └── machine_failure_prediction.ipynb
+│   │
+│   ├── requirements.txt
+│   └── .gitignore
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── ...
+│
 └── README.md
-🚀 Installation and Setup
-To run this project locally, follow these steps:
+```
 
-1. Clone the repository:
+---
 
-Bash
-git clone [https://github.com/Utsav006/Utsav_Singh_PBEL3.0.git](https://github.com/Utsav006/Utsav_Singh_PBEL3.0.git)
-cd Utsav_Singh_PBEL3.0
-2. Create and activate a virtual environment:
+# 🚀 Installation
 
-Bash
-# Windows
+## 1. Clone Repository
+
+```bash
+git clone https://github.com/SweetyPaul19/InfosysSpringBoard-Team-D.git
+
+cd Machine_Failure_detection
+```
+
+---
+
+## 2. Create Virtual Environment
+
+Windows
+
+```bash
 python -m venv venv
+```
+
+Activate
+
+```bash
 venv\Scripts\activate
+```
 
-# macOS/Linux
-python3 -m venv venv
-source venv/bin/activate
-3. Install the required dependencies:
+---
 
-Bash
-pip install pandas numpy scikit-learn matplotlib seaborn flask joblib
-4. Launch the web application:
+## 3. Install Backend Dependencies
 
-Bash
-cd code
+```bash
+cd backend
+
+pip install -r requirements.txt
+```
+
+---
+
+## 4. Run Flask Backend
+
+```bash
+cd flask_application
+
 python app.py
-5. Access the UI:
-Open your web browser and navigate to: http://127.0.0.1:5000
+```
 
-🧪 Testing the Model
-To see the failure alert and dynamic red waveform in action, input the following parameters into the UI. These values simulate a Power Failure (abnormally high speed, abnormally low torque):
+Backend runs at
 
-Machine Quality Type: Low (L)
+```
+http://127.0.0.1:5000
+```
 
-Air Temperature [K]: 298.9
+---
 
-Process Temperature [K]: 309.1
+## 5. Run React Frontend
 
-Rotational Speed [rpm]: 2861
+```bash
+cd frontend
 
-Torque [Nm]: 4.6
+npm install
 
-Tool Wear [min]: 143
+npm start
+```
 
-👨‍💻 Author
-Utsav Singh
+or
 
-GitHub: @Utsav006
+```bash
+npm run dev
+```
+
+depending on your React setup.
+
+---
+
+# 🤖 Machine Learning Workflow
+
+1. Load Dataset
+2. Data Cleaning
+3. Feature Engineering
+4. Train-Test Split
+5. Model Training
+   - Random Forest
+   - Gradient Boosting
+   - XGBoost
+6. Model Evaluation
+7. Save Best Models
+8. Deploy using Flask API
+
+---
+
+# 📊 Model Outputs
+
+## Model 1
+
+Predicts
+
+- Machine Failure
+- No Machine Failure
+
+Evaluation Metrics
+
+- Accuracy
+- Precision
+- Recall
+- F1 Score
+- ROC-AUC
+
+---
+
+## Model 2
+
+Predicts Failure Type
+
+- Heat Dissipation Failure (HDF)
+- Power Failure (PWF)
+- Overstrain Failure (OSF)
+- Tool Wear Failure (TWF)
+- Random Failure (RNF)
+
+---
+
+# 📡 API Endpoint
+
+### POST
+
+```
+/predict
+```
+
+Input JSON
+
+```json
+{
+  "Type": "L",
+  "Air temperature [K]": 298.1,
+  "Process temperature [K]": 308.6,
+  "Rotational speed [rpm]": 1551,
+  "Torque [Nm]": 42.8,
+  "Tool wear [min]": 10
+}
+```
+
+Output
+
+```json
+{
+  "machine_failure": 0,
+  "failure_probability": 0.12,
+  "status": "Healthy"
+}
+```
+
+---
+
+# 📈 Dataset
+
+**AI4I 2020 Predictive Maintenance Dataset**
+
+Features
+
+- Type
+- Air Temperature
+- Process Temperature
+- Rotational Speed
+- Torque
+- Tool Wear
+
+Target
+
+- Machine Failure
+- Failure Type
+
+---
+
+
+- Docker Support
+- Predict Remaining Useful Life (RUL)
+- Model Monitoring
