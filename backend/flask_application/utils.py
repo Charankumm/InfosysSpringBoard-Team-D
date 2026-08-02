@@ -1,6 +1,7 @@
 import joblib
 import pandas as pd
 import os
+from alerts.alert_manager import process_prediction
 
 # Get backend folder path
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,7 +40,6 @@ def predict_machine(data):
     # Model 1
     # ---------------------------
     prediction = machine_failure_model.predict(df)[0]
-
     probability = machine_failure_model.predict_proba(df)[0][1]
 
     result = {
@@ -53,11 +53,13 @@ def predict_machine(data):
     # Model 2
     # ---------------------------
     if prediction == 1:
-
         failure = failure_type_model.predict(df)[0]
-
         failure_name = label_encoder.inverse_transform([failure])[0]
-
         result["failure_type"] = failure_name
+        process_prediction(
+            failure_detected=True,
+            failure_type=failure_name,
+            probability=probability
+        )
 
     return result
