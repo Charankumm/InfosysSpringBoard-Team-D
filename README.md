@@ -29,12 +29,13 @@ Our solution combines IoT sensor data with Machine Learning models to continuous
 
 - 📡 Real-time IoT sensor monitoring
 - 🤖 Machine Learning-based failure prediction
-- 📈 Remaining Useful Life (RUL) estimation
 - 🚨 Smart anomaly detection
-- 🔔 Intelligent alert system
-- 📊 Interactive dashboard
-- 📉 Equipment health visualization
-- 🔄 Continuous model retraining
+- 🔔 Intelligent email alert system
+- 📊 Interactive dashboard with live prediction visualization
+- 📈 Machine health gauge and failure probability tracking
+- 💡 AI-based maintenance recommendations
+- 📄 Downloadable PDF health reports
+- 📉 Prediction history and trend analysis
 
 ---
 
@@ -64,6 +65,23 @@ The system follows a modular architecture with dedicated layers for data ingesti
 
 ---
 
+## 🖥️ Dashboard Highlights
+
+The PredictIQ dashboard provides an intuitive interface for monitoring machine health and maintenance insights. It includes:
+
+- Machine parameter input form
+- Real-time machine failure prediction
+- Dynamic health gauge and status indicator
+- Failure probability trend chart
+- Prediction history table
+- AI-generated maintenance recommendations
+- SMTP email alert status display
+- Downloadable PDF maintenance report
+
+The dashboard is fully integrated with the Flask backend to display live prediction results from the machine learning model.
+
+---
+
 ## 🛠️ Tech Stack
 
 ### Backend
@@ -88,9 +106,11 @@ The system follows a modular architecture with dedicated layers for data ingesti
 
 ### Frontend
 
-- React.js
-- WebSocket
-- Firebase
+- HTML5
+- CSS3
+- JavaScript (ES6)
+- Chart.js
+- Responsive Dashboard UI
 
 ### Database
 
@@ -152,14 +172,39 @@ The project targets measurable business improvements such as reduced downtime an
 InfosysSpringBoard-Team-D
 │
 ├── backend/
+│   ├── flask_application/
+│   │   ├── alerts/
+│   │   │   ├── alert_manager.py
+│   │   │   ├── config.py
+│   │   │   ├── email_alert.py
+│   │   │   └── __init__.py
+│   │   ├── app.py
+│   │   ├── routes.py
+│   │   └── utils.py
+│   │
+│   ├── model_training/
+│   │   ├── ai4i2020.csv
+│   │   └── machine_failure_prediction.ipynb
+│   │
+│   ├── models/
+│   │   ├── machine_failure_model.pkl
+│   │   ├── failure_type_model.pkl
+│   │   └── label_encoder.pkl
+│   │
+│   └── requirements.txt
+│
 ├── frontend/
-├── models/
+│   ├── assets/
+│   ├── index.html
+│   ├── style.css
+│   └── script.js
+│
+├── code/
+├── data/
 ├── datasets/
-├── notebooks/
-├── docs/
 ├── images/
-├── tests/
-├── requirements.txt
+├── notebooks/
+│
 ├── README.md
 └── .gitignore
 ```
@@ -211,6 +256,17 @@ python app.py
 
 ---
 
+## 🔄 Project Workflow
+
+1. User enters machine operating parameters.
+2. Frontend sends the data to the Flask backend through REST API.
+3. The machine learning model predicts machine failure probability.
+4. Prediction results are displayed on the interactive dashboard.
+5. If a critical failure is detected, the backend triggers an automated email alert.
+6. Users can review prediction history and download the analysis as a PDF report.
+
+---
+
 ## 🌱 Future Enhancements
 
 - Federated Learning
@@ -221,6 +277,14 @@ python app.py
 - Mobile Monitoring Application
 
 The project roadmap envisions expanding from predictive maintenance toward enterprise-scale, prescriptive intelligence. :contentReference[oaicite:7]{index=7}
+
+---
+
+## 🎥 Demo
+
+The application demonstrates an end-to-end predictive maintenance workflow:
+
+Machine Input → ML Prediction → Dashboard Visualization → Email Alert → PDF Report
 
 ---
 
