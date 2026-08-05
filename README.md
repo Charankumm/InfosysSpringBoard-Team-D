@@ -211,19 +211,6 @@ InfosysSpringBoard-Team-D
 
 ---
 
-## 👥 Team
-
-| Name | Role |
-|------|------|
-| Member 1 | Team Lead / AI Developer |
-| Member 2 | Backend Developer |
-| Member 3 | Frontend Developer |
-| Member 4 | ML Engineer |
-
-*(Update with your actual team members.)*
-
----
-
 ## 🚀 Getting Started
 
 ### Clone Repository
