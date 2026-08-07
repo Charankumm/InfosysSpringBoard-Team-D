@@ -11,13 +11,17 @@ def send_email_alert(subject, message):
     email.set_content(message)
 
     try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        # Added timeout=10 seconds
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=10) as smtp:
             smtp.login(SENDER_EMAIL, APP_PASSWORD)
             smtp.send_message(email)
-            print("✅ Email alert sent successfully!")
+
+        print("✅ Email alert sent successfully!")
+        return True
 
     except Exception as e:
         print("❌ Failed to send email:", e)
+        return False
 
 
 if __name__ == "__main__":

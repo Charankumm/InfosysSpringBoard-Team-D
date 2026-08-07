@@ -1,6 +1,8 @@
 import joblib
 import pandas as pd
 import os
+import threading
+
 from alerts.alert_manager import process_prediction
 
 # Get backend folder path
@@ -36,9 +38,7 @@ def predict_machine(data):
     # Convert JSON into DataFrame
     df = pd.DataFrame([data])
 
-    # ---------------------------
     # Model 1
-    # ---------------------------
     prediction = machine_failure_model.predict(df)[0]
     probability = machine_failure_model.predict_proba(df)[0][1]
 
@@ -49,17 +49,21 @@ def predict_machine(data):
         "alert": get_warning_status(probability)
     }
 
-    # ---------------------------
     # Model 2
-    # ---------------------------
     if prediction == 1:
-        failure = failure_type_model.predict(df)[0]
-        failure_name = label_encoder.inverse_transform([failure])[0]
-        result["failure_type"] = failure_name
-        process_prediction(
-            failure_detected=True,
-            failure_type=failure_name,
-            probability=probability
-        )
+      failure = failure_type_model.predict(df)[0]
+      failure_name = label_encoder.inverse_transform([failure])[0]
+      result["failure_type"] = failure_name
+
+      threading.Thread(
+        target=process_prediction,
+        kwargs={
+            "failure_detected": True,
+            "failure_type": failure_name,
+            "probability": probability,
+            "status": result["alert"]
+        },
+        daemon=True
+      ).start()
 
     return result

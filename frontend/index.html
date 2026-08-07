@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PredictIQ - Industrial Predictive Maintenance</title>
+<meta name="description" content="AI-powered predictive maintenance monitoring for industrial machines.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ================= AMBIENT BACKGROUND ================= -->
+<div class="bg-grid" aria-hidden="true"></div>
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+<!-- ================= TOAST CONTAINER ================= -->
+<div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+<!-- ================= LANDING SCREEN ================= -->
+<section id="landing" class="landing">
+  <div class="landing-radar" aria-hidden="true">
+    <span class="radar-ring ring-1"></span>
+    <span class="radar-ring ring-2"></span>
+    <span class="radar-ring ring-3"></span>
+    <span class="radar-sweep"></span>
+  </div>
+
+  <div class="landing-content">
+    <div class="brand-mark">
+      <span class="brand-icon"><i class="fa-solid fa-industry"></i></span>
+      <span class="brand-eyebrow">INDUSTRY 4.0 &nbsp;•&nbsp; PREDICTIVE INTELLIGENCE</span>
+    </div>
+
+    <h1 class="landing-title">PredictIQ</h1>
+    <p class="landing-tagline">Monitor <span class="tagline-dot">•</span> Predict <span class="tagline-dot">•</span> Prevent</p>
+    <p class="landing-desc">AI-powered predictive maintenance system for industrial machines. Real-time failure forecasting, built on live sensor telemetry.</p>
+
+    <button id="start-btn" class="btn btn-glow btn-start">
+      <i class="fa-solid fa-play"></i>
+      <span>Start Monitoring</span>
+    </button>
+
+    <div class="landing-stats">
+      <div class="landing-stat">
+        <span class="stat-num" data-mono>98.8<small>%</small></span>
+        <span class="stat-label">Model Accuracy</span>
+      </div>
+      <div class="landing-stat-divider"></div>
+      <div class="landing-stat">
+        <span class="stat-num" data-mono>&lt;200<small>ms</small></span>
+        <span class="stat-label">Inference Time</span>
+      </div>
+      <div class="landing-stat-divider"></div>
+      <div class="landing-stat">
+        <span class="stat-num" data-mono>24<small>/7</small></span>
+        <span class="stat-label">Live Monitoring</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="landing-scroll-hint" aria-hidden="true">
+    <span></span>
+  </div>
+</section>
+
+<!-- ================= AUTH SCREEN ================= -->
+<section id="auth" class="auth auth-hidden">
+  <div class="auth-card hud-card">
+    <div class="auth-brand">
+      <span class="brand-icon"><i class="fa-solid fa-industry"></i></span>
+      <span class="auth-brand-text">PredictIQ</span>
+    </div>
+
+    <div class="auth-tabs" role="tablist">
+      <button type="button" class="auth-tab active" data-tab="signin" role="tab" aria-selected="true">Sign In</button>
+      <button type="button" class="auth-tab" data-tab="signup" role="tab" aria-selected="false">Create Account</button>
+    </div>
+
+    <!-- Sign In -->
+    <form id="signin-form" class="auth-form" data-panel="signin">
+      <label class="input-card">
+        <span class="input-icon"><i class="fa-solid fa-user"></i></span>
+        <span class="input-body">
+          <span class="input-label">Username</span>
+          <input type="text" id="signin-username" class="input-field" autocomplete="username" required>
+        </span>
+      </label>
+
+      <label class="input-card">
+        <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+        <span class="input-body">
+          <span class="input-label">Password</span>
+          <input type="password" id="signin-password" class="input-field" autocomplete="current-password" required>
+        </span>
+      </label>
+
+      <p class="auth-error" id="signin-error" hidden></p>
+
+      <button type="submit" class="btn btn-glow btn-analyze">
+        <i class="fa-solid fa-right-to-bracket"></i>
+        <span>Sign In</span>
+      </button>
+    </form>
+
+    <!-- Create Account -->
+    <form id="signup-form" class="auth-form" data-panel="signup" hidden>
+      <label class="input-card">
+        <span class="input-icon"><i class="fa-solid fa-id-badge"></i></span>
+        <span class="input-body">
+          <span class="input-label">Full Name</span>
+          <input type="text" id="signup-name" class="input-field" autocomplete="name" required>
+        </span>
+      </label>
+
+      <label class="input-card">
+        <span class="input-icon"><i class="fa-solid fa-user"></i></span>
+        <span class="input-body">
+          <span class="input-label">Username</span>
+          <input type="text" id="signup-username" class="input-field" autocomplete="username" required>
+        </span>
+      </label>
+
+      <label class="input-card">
+        <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+        <span class="input-body">
+          <span class="input-label">Password</span>
+          <input type="password" id="signup-password" class="input-field" autocomplete="new-password" minlength="4" required>
+        </span>
+      </label>
+
+      <label class="input-card">
+        <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+        <span class="input-body">
+          <span class="input-label">Confirm Password</span>
+          <input type="password" id="signup-confirm" class="input-field" autocomplete="new-password" minlength="4" required>
+        </span>
+      </label>
+
+      <p class="auth-error" id="signup-error" hidden></p>
+
+      <button type="submit" class="btn btn-glow btn-analyze">
+        <i class="fa-solid fa-user-plus"></i>
+        <span>Create Account</span>
+      </button>
+    </form>
+
+    <p class="auth-note"><i class="fa-solid fa-circle-info"></i> Accounts are stored locally in this browser for demo purposes - this is not a production authentication system.</p>
+
+    <button type="button" id="auth-back" class="auth-back"><i class="fa-solid fa-arrow-left"></i> Back to home</button>
+  </div>
+</section>
+
+<!-- ================= MAIN APP ================= -->
+<div id="app" class="app app-hidden">
+
+  <!-- ---------- HEADER ---------- -->
+  <header class="app-header">
+    <div class="header-left">
+      <span class="logo-icon"><i class="fa-solid fa-industry"></i></span>
+      <div class="logo-text">
+        <span class="logo-title">PredictIQ</span>
+        <span class="logo-sub">Monitor · Predict · Prevent</span>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="clock-block">
+        <i class="fa-regular fa-clock"></i>
+        <span id="live-clock" data-mono>00:00:00</span>
+      </div>
+      <div class="date-block">
+        <span id="live-date">—</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <span class="status-pill" id="connection-pill">
+        <span class="pill-dot"></span>
+        <span id="connection-text">Connecting…</span>
+      </span>
+
+      <span class="user-chip" id="user-chip">
+        <i class="fa-solid fa-circle-user"></i>
+        <span id="user-chip-name">Guest</span>
+      </span>
+
+      <button id="settings-toggle" class="icon-btn" title="Settings" aria-label="Open settings">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+      <button id="theme-toggle" class="icon-btn" title="Toggle theme" aria-label="Toggle dark/light theme">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+      </button>
+      <button id="logout-btn" class="icon-btn" title="Log out" aria-label="Log out">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ---------- SETTINGS DRAWER ---------- -->
+  <div id="settings-overlay" class="settings-overlay" hidden></div>
+  <aside id="settings-drawer" class="settings-drawer" hidden>
+    <div class="settings-header">
+      <h2><i class="fa-solid fa-gear"></i> Settings</h2>
+      <button id="settings-close" class="icon-btn" aria-label="Close settings"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="settings-section">
+      <span class="settings-label">Alert Thresholds <em>(failure probability %)</em></span>
+      <div class="settings-row">
+        <label>Monitor ≥ <span id="th-monitor-val" data-mono>20</span>%</label>
+        <input type="range" id="th-monitor" min="0" max="100" value="20">
+      </div>
+      <div class="settings-row">
+        <label>Warning ≥ <span id="th-warning-val" data-mono>45</span>%</label>
+        <input type="range" id="th-warning" min="0" max="100" value="45">
+      </div>
+      <div class="settings-row">
+        <label>Critical ≥ <span id="th-critical-val" data-mono>75</span>%</label>
+        <input type="range" id="th-critical" min="0" max="100" value="75">
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <span class="settings-label">Alerts</span>
+      <label class="settings-toggle">
+        <input type="checkbox" id="toggle-sound" checked>
+        <span><i class="fa-solid fa-volume-high"></i> Play sound on Critical status</span>
+      </label>
+      <label class="settings-toggle">
+        <input type="checkbox" id="toggle-notify">
+        <span><i class="fa-solid fa-bell"></i> Desktop notifications on Warning / Critical</span>
+      </label>
+    </div>
+
+    <button id="settings-reset" class="btn btn-outline" style="width:100%; margin-top: 0.5rem;">
+      <i class="fa-solid fa-rotate-left"></i><span>Reset to Defaults</span>
+    </button>
+  </aside>
+
+  <!-- ---------- DASHBOARD GRID ---------- -->
+  <main class="dashboard-grid">
+
+    <!-- LEFT PANEL — MACHINE INPUTS -->
+    <aside class="panel panel-left hud-card">
+      <div class="panel-header">
+        <i class="fa-solid fa-sliders"></i>
+        <h2>Machine Inputs</h2>
+      </div>
+
+      <form id="input-form" class="input-form">
+
+        <label class="input-card">
+          <span class="input-icon"><i class="fa-solid fa-industry"></i></span>
+          <span class="input-body">
+            <span class="input-label">Machine Type</span>
+            <select id="machine-type" name="machineType" class="input-field">
+              <option value="L">Low (L)</option>
+              <option value="M" selected>Medium (M)</option>
+              <option value="H">High (H)</option>
+            </select>
+          </span>
+        </label>
+
+        <label class="input-card">
+          <span class="input-icon"><i class="fa-solid fa-temperature-half"></i></span>
+          <span class="input-body">
+            <span class="input-label">Air Temperature <em>[K]</em></span>
+            <input type="number" step="0.1" id="air-temp" name="airTemp" class="input-field" value="298.1" required>
+          </span>
+        </label>
+
+        <label class="input-card">
+          <span class="input-icon"><i class="fa-solid fa-fire-flame-simple"></i></span>
+          <span class="input-body">
+            <span class="input-label">Process Temperature <em>[K]</em></span>
+            <input type="number" step="0.1" id="process-temp" name="processTemp" class="input-field" value="308.6" required>
+          </span>
+        </label>
+
+        <label class="input-card">
+          <span class="input-icon"><i class="fa-solid fa-gauge-high"></i></span>
+          <span class="input-body">
+            <span class="input-label">Rotational Speed <em>[rpm]</em></span>
+            <input type="number" step="1" id="rot-speed" name="rotSpeed" class="input-field" value="1551" required>
+          </span>
+        </label>
+
+        <label class="input-card">
+          <span class="input-icon"><i class="fa-solid fa-arrows-spin"></i></span>
+          <span class="input-body">
+            <span class="input-label">Torque <em>[Nm]</em></span>
+            <input type="number" step="0.1" id="torque" name="torque" class="input-field" value="42.8" required>
+          </span>
+        </label>
+
+        <label class="input-card">
+          <span class="input-icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+          <span class="input-body">
+            <span class="input-label">Tool Wear <em>[min]</em></span>
+            <input type="number" step="1" id="tool-wear" name="toolWear" class="input-field" value="108" required>
+          </span>
+        </label>
+
+        <button type="submit" id="analyze-btn" class="btn btn-glow btn-analyze">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Analyze Machine</span>
+        </button>
+      </form>
+    </aside>
+
+    <!-- CENTER PANEL — PREDICTION RESULT -->
+    <section class="panel panel-center">
+
+      <div class="hud-card status-card" id="status-card" data-status="idle">
+        <div class="status-card-top">
+          <span class="status-icon" id="status-icon"><i class="fa-solid fa-circle-question"></i></span>
+          <div class="status-copy">
+            <span class="status-label" id="status-label">Awaiting Analysis</span>
+            <span class="status-sub" id="status-sub">Run a check to see live machine status</span>
+          </div>
+          <span class="alert-chip" id="alert-chip">STANDBY</span>
+        </div>
+      </div>
+
+      <div class="hud-card gauge-card">
+        <div class="gauge-wrap">
+          <svg class="gauge-svg" viewBox="0 0 200 200">
+            <circle class="gauge-track" cx="100" cy="100" r="80"></circle>
+            <circle class="gauge-arc" id="gauge-arc" cx="100" cy="100" r="80"></circle>
+          </svg>
+          <div class="gauge-center">
+            <span class="gauge-value" id="gauge-value" data-mono>0<small>%</small></span>
+            <span class="gauge-caption">Failure Probability</span>
+          </div>
+        </div>
+
+        <div class="gauge-side-stats">
+          <div class="side-stat">
+            <span class="side-stat-label">Machine Health Score</span>
+            <span class="side-stat-value" id="health-score" data-mono>— <small>/ 100</small></span>
+          </div>
+          <div class="side-stat">
+            <span class="side-stat-label">Predicted Failure Type</span>
+            <span class="side-stat-value side-stat-text" id="failure-type">—</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT PANEL — AI INSIGHTS -->
+    <aside class="panel panel-right hud-card">
+      <div class="panel-header">
+        <i class="fa-solid fa-brain"></i>
+        <h2>AI Insights</h2>
+      </div>
+
+      <div id="insights-empty" class="insights-empty">
+        <i class="fa-solid fa-microchip"></i>
+        <p>Recommendations will appear here once a machine analysis runs.</p>
+      </div>
+
+      <ol id="insights-list" class="insights-list" hidden></ol>
+
+      <div class="factors-section" id="factors-section" hidden>
+        <div class="factors-heading"><i class="fa-solid fa-signal"></i> Feature Signal Strength</div>
+        <div id="factors-list" class="factors-list"></div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- ---------- BOTTOM SECTION ---------- -->
+  <section class="dashboard-bottom">
+
+    <div class="bottom-grid">
+
+      <!-- Prediction History -->
+      <div class="hud-card bottom-card history-card">
+        <div class="panel-header">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <h2>Prediction History</h2>
+        </div>
+        <div id="history-empty" class="history-empty">No predictions yet this session.</div>
+        <ul id="history-list" class="history-list" hidden></ul>
+      </div>
+
+      <!-- Trend Graph -->
+      <div class="hud-card bottom-card chart-card">
+        <div class="panel-header">
+          <i class="fa-solid fa-chart-line"></i>
+          <h2>Failure Probability Trend</h2>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="trend-chart"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="bottom-grid bottom-grid-secondary">
+
+      <!-- Failure Timeline -->
+      <div class="hud-card bottom-card timeline-card">
+        <div class="panel-header">
+          <i class="fa-solid fa-timeline"></i>
+          <h2>Failure Timeline</h2>
+        </div>
+        <div class="failure-timeline" id="failure-timeline">
+          <div class="ft-step" data-stage="healthy">
+            <span class="ft-dot"></span>
+            <span class="ft-label">Healthy</span>
+          </div>
+          <div class="ft-line"></div>
+          <div class="ft-step" data-stage="monitor">
+            <span class="ft-dot"></span>
+            <span class="ft-label">Monitor</span>
+          </div>
+          <div class="ft-line"></div>
+          <div class="ft-step" data-stage="warning">
+            <span class="ft-dot"></span>
+            <span class="ft-label">Warning</span>
+          </div>
+          <div class="ft-line"></div>
+          <div class="ft-step" data-stage="critical">
+            <span class="ft-dot"></span>
+            <span class="ft-label">Critical</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SMTP Status -->
+      <div class="hud-card bottom-card smtp-card">
+        <div class="panel-header">
+          <i class="fa-solid fa-envelope"></i>
+          <h2>Email Alert Service</h2>
+        </div>
+        <div class="smtp-status" id="smtp-status" data-state="waiting">
+          <span class="smtp-icon"><i class="fa-regular fa-clock"></i></span>
+          <span id="smtp-text">Waiting for Email Service</span>
+        </div>
+      </div>
+
+      <!-- Download Report -->
+      <div class="hud-card bottom-card download-card">
+        <div class="panel-header">
+          <i class="fa-solid fa-file-shield"></i>
+          <h2>Machine Health Report</h2>
+        </div>
+        <p class="download-copy">Export the latest analysis — inputs, prediction, probability and recommendations — as a PDF record.</p>
+        <button id="download-btn" class="btn btn-outline btn-download">
+          <i class="fa-solid fa-download"></i>
+          <span>Download Machine Health Report</span>
+        </button>
+        <button id="csv-btn" class="btn btn-outline btn-download">
+          <i class="fa-solid fa-file-csv"></i>
+          <span>Export History as CSV</span>
+        </button>
+      </div>
+
+    </div>
+
+  </section>
+
+  <footer class="app-footer">
+    <span>PredictIQ &copy; <span id="footer-year"></span> — Infosys Springboard Internship Project</span>
+  </footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

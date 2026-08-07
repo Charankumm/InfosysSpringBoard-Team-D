@@ -9,7 +9,7 @@ def process_prediction(
 ):
 
     if not failure_detected:
-        return
+        return False
 
     subject = "⚠ Predictive Maintenance Alert"
 
@@ -25,4 +25,4 @@ Failure Type: {failure_type}
 Please inspect the machine immediately.
 """
 
-    send_email_alert(subject, message)
+    return send_email_alert(subject, message)

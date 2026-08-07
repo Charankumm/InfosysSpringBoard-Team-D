@@ -1,6 +1,9 @@
-# config.py
+import os
+from dotenv import load_dotenv
 
-SENDER_EMAIL = "yourmail@gmail.com"
-APP_PASSWORD = "yourpassword"
+load_dotenv()
 
-RECEIVER_EMAIL = "yourmail@gmail.com"
+SENDER_EMAIL = os.getenv("SENDER_EMAIL")
+APP_PASSWORD = os.getenv("APP_PASSWORD")
+RECEIVER_EMAIL = os.getenv("RECEIVER_EMAIL")
+
