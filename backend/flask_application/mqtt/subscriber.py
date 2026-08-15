@@ -12,6 +12,7 @@ sys.path.append(
 
 from utils import predict_machine
 
+
 BROKER = "localhost"
 PORT = 1883
 
@@ -20,6 +21,7 @@ RESULT_TOPIC = "factory/machine/result"
 
 
 def on_connect(client, userdata, flags, reason_code, properties=None):
+
     print("Connected to MQTT broker")
 
     client.subscribe(SENSOR_TOPIC)
@@ -28,36 +30,53 @@ def on_connect(client, userdata, flags, reason_code, properties=None):
 
 
 def on_message(client, userdata, msg):
+
     try:
+
         print("\n-----------------------------")
         print("MQTT message received")
         print("-----------------------------")
 
+        # Get MQTT message
         payload = msg.payload.decode()
 
         print("Raw message:")
         print(payload)
 
+        # Convert JSON string to Python dictionary
         data = json.loads(payload)
 
         print("\nSensor data:")
         print(data)
 
-        # Run existing ML prediction
+        # Run ML prediction
         result = predict_machine(data)
 
         print("\nML Prediction:")
         print(result)
 
-        # Send prediction back through MQTT
+        # Combine sensor data + prediction
+        mqtt_result = {
+            "sensor_data": data,
+            "machine_failure": result["machine_failure"],
+            "failure_probability": result["failure_probability"],
+            "failure_type": result["failure_type"],
+            "alert": result["alert"]
+        }
+
+        print("\nFinal MQTT result:")
+        print(mqtt_result)
+
+        # Publish combined result
         client.publish(
             RESULT_TOPIC,
-            json.dumps(result)
+            json.dumps(mqtt_result)
         )
 
-        print("\nPrediction published")
+        print("\nPrediction + sensor data published")
 
     except Exception as e:
+
         print("Error processing MQTT message:")
         print(e)
 

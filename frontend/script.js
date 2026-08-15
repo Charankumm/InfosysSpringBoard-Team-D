@@ -1035,3 +1035,410 @@ $("logout-btn").addEventListener("click", () => {
   el.landing.classList.remove("landing-exit");
   showToast("Signed out.", "info");
 });
+// ==========================================
+// MQTT LIVE PREDICTION INTEGRATION
+// ==========================================
+
+const MQTT_RESULT_URL = "http://127.0.0.1:5000/mqtt-result";
+
+async function fetchMQTTResult() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/mqtt-result");
+
+        if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.alert === "Waiting for sensor data...") {
+            return;
+        }
+
+        // Update machine inputs
+        const sensor = data.sensor_data;
+
+        if (sensor) {
+            $("machine-type").value = sensor["Type"];
+            $("air-temp").value = sensor["Air temperature [K]"];
+            $("process-temp").value = sensor["Process temperature [K]"];
+            $("rot-speed").value = sensor["Rotational speed [rpm]"];
+            $("torque").value = sensor["Torque [Nm]"];
+            $("tool-wear").value = sensor["Tool wear [min]"];
+
+            state.lastInputs = {
+                machine_type: sensor["Type"],
+                air_temperature: sensor["Air temperature [K]"],
+                process_temperature: sensor["Process temperature [K]"],
+                rotational_speed: sensor["Rotational speed [rpm]"],
+                torque: sensor["Torque [Nm]"],
+                tool_wear: sensor["Tool wear [min]"]
+            };
+        }
+
+        // Update probability, status, graph, etc.
+        handleResult(data);
+
+    } catch (error) {
+        console.error("MQTT result fetch failed:", error);
+    }
+}
+
+setInterval(fetchMQTTResult, 2000);
+fetchMQTTResult();
+
+// ==========================================================================
+// PAGE NAVIGATION (Dashboard / Repair Contact / AI Assistant)
+// Purely additive — does not touch any dashboard/MQTT logic above.
+// ==========================================================================
+document.querySelectorAll(".page-nav-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const target = btn.getAttribute("data-page");
+
+    document.querySelectorAll(".page-nav-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    document.querySelectorAll(".app-page").forEach((page) => { page.hidden = true; });
+    const targetPage = $(`page-${target}`);
+    if (targetPage) targetPage.hidden = false;
+
+    if (target === "assistant") {
+      const win = $("chat-window");
+      if (win) win.scrollTop = win.scrollHeight;
+    }
+  });
+});
+
+// ==========================================================================
+// REPAIR CONTACT PAGE — editable, persisted per browser (localStorage)
+// ==========================================================================
+const CONTACTS_KEY = "predictiq-contacts";
+let contactsState = loadContacts();
+let editingContactId = null;
+
+function loadContacts() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CONTACTS_KEY));
+    if (Array.isArray(saved) && saved.length > 0) return saved;
+  } catch (e) { /* ignore */ }
+  // Seed one example contact so the page isn't empty on first run — fully editable/removable.
+  return [{
+    id: "seed-1",
+    name: "Assigned Technician",
+    role: "Maintenance Engineer",
+    company: "Facilities Team",
+    phone: "+1 (000) 000-0000",
+    email: "technician@example.com",
+    hours: "Mon–Fri, 9am–6pm",
+    notes: "Click Edit to fill in your real repair contact details.",
+  }];
+}
+
+function saveContacts() {
+  try { localStorage.setItem(CONTACTS_KEY, JSON.stringify(contactsState)); } catch (e) { /* ignore */ }
+}
+
+function renderContacts() {
+  const list = $("contact-list");
+  const empty = $("contact-empty");
+
+  if (contactsState.length === 0) {
+    empty.hidden = false;
+    list.innerHTML = "";
+    return;
+  }
+  empty.hidden = true;
+
+  list.innerHTML = contactsState.map((c) => {
+    if (c.id === editingContactId) return contactEditTemplate(c);
+    return contactViewTemplate(c);
+  }).join("");
+
+  // Wire up buttons for whichever cards just got rendered
+  list.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => {
+    editingContactId = b.getAttribute("data-edit");
+    renderContacts();
+  }));
+  list.querySelectorAll("[data-delete]").forEach((b) => b.addEventListener("click", () => {
+    const id = b.getAttribute("data-delete");
+    contactsState = contactsState.filter((c) => c.id !== id);
+    saveContacts();
+    renderContacts();
+    showToast("Contact removed.", "info");
+  }));
+  list.querySelectorAll("[data-cancel-edit]").forEach((b) => b.addEventListener("click", () => {
+    const id = b.getAttribute("data-cancel-edit");
+    // If it was a brand-new blank contact being cancelled, drop it entirely.
+    const c = contactsState.find((x) => x.id === id);
+    if (c && !c.name && !c.phone && !c.email) {
+      contactsState = contactsState.filter((x) => x.id !== id);
+      saveContacts();
+    }
+    editingContactId = null;
+    renderContacts();
+  }));
+  list.querySelectorAll("form[data-save]").forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const id = form.getAttribute("data-save");
+      const c = contactsState.find((x) => x.id === id);
+      if (!c) return;
+      c.name = form.querySelector('[name="name"]').value.trim();
+      c.role = form.querySelector('[name="role"]').value.trim();
+      c.company = form.querySelector('[name="company"]').value.trim();
+      c.phone = form.querySelector('[name="phone"]').value.trim();
+      c.email = form.querySelector('[name="email"]').value.trim();
+      c.hours = form.querySelector('[name="hours"]').value.trim();
+      c.notes = form.querySelector('[name="notes"]').value.trim();
+
+      if (!c.name) {
+        showToast("Please enter at least a name before saving.", "error");
+        return;
+      }
+
+      saveContacts();
+      editingContactId = null;
+      renderContacts();
+      showToast("Contact saved.", "success");
+    });
+  });
+}
+
+function esc(str) {
+  return String(str || "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+}
+
+function contactViewTemplate(c) {
+  return `
+    <div class="contact-card">
+      <div class="contact-card-top">
+        <div class="contact-card-name">
+          <i class="fa-solid fa-user"></i>
+          <div class="contact-card-name-text">
+            <strong>${esc(c.name) || "Unnamed contact"}</strong>
+            <span>${esc(c.role) || "—"}${c.company ? " · " + esc(c.company) : ""}</span>
+          </div>
+        </div>
+        <div class="contact-card-actions">
+          <button type="button" data-edit="${c.id}" aria-label="Edit contact"><i class="fa-solid fa-pen"></i></button>
+          <button type="button" class="contact-delete-btn" data-delete="${c.id}" aria-label="Delete contact"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>
+      <div class="contact-card-fields">
+        <div class="contact-field">
+          <span class="contact-field-label">Phone</span>
+          <span class="contact-field-value mono">${esc(c.phone) || "—"}</span>
+        </div>
+        <div class="contact-field">
+          <span class="contact-field-label">Email</span>
+          <span class="contact-field-value mono">${esc(c.email) || "—"}</span>
+        </div>
+        <div class="contact-field">
+          <span class="contact-field-label">Available Hours</span>
+          <span class="contact-field-value">${esc(c.hours) || "—"}</span>
+        </div>
+        ${c.notes ? `<div class="contact-field full"><span class="contact-field-label">Notes</span><span class="contact-field-value">${esc(c.notes)}</span></div>` : ""}
+      </div>
+    </div>
+  `;
+}
+
+function contactEditTemplate(c) {
+  return `
+    <div class="contact-card">
+      <form class="contact-edit-form" data-save="${c.id}">
+        <label class="input-card">
+          <span class="input-icon"><i class="fa-solid fa-user"></i></span>
+          <span class="input-body">
+            <span class="input-label">Name</span>
+            <input type="text" name="name" class="input-field" value="${esc(c.name)}" required>
+          </span>
+        </label>
+        <label class="input-card">
+          <span class="input-icon"><i class="fa-solid fa-id-badge"></i></span>
+          <span class="input-body">
+            <span class="input-label">Role</span>
+            <input type="text" name="role" class="input-field" value="${esc(c.role)}" placeholder="e.g. Maintenance Engineer">
+          </span>
+        </label>
+        <label class="input-card">
+          <span class="input-icon"><i class="fa-solid fa-industry"></i></span>
+          <span class="input-body">
+            <span class="input-label">Company</span>
+            <input type="text" name="company" class="input-field" value="${esc(c.company)}">
+          </span>
+        </label>
+        <label class="input-card">
+          <span class="input-icon"><i class="fa-solid fa-phone"></i></span>
+          <span class="input-body">
+            <span class="input-label">Phone</span>
+            <input type="tel" name="phone" class="input-field" value="${esc(c.phone)}">
+          </span>
+        </label>
+        <label class="input-card">
+          <span class="input-icon"><i class="fa-solid fa-envelope"></i></span>
+          <span class="input-body">
+            <span class="input-label">Email</span>
+            <input type="email" name="email" class="input-field" value="${esc(c.email)}">
+          </span>
+        </label>
+        <label class="input-card">
+          <span class="input-icon"><i class="fa-solid fa-clock"></i></span>
+          <span class="input-body">
+            <span class="input-label">Available Hours</span>
+            <input type="text" name="hours" class="input-field" value="${esc(c.hours)}" placeholder="e.g. Mon–Fri, 9am–6pm">
+          </span>
+        </label>
+        <label class="input-card">
+          <span class="input-icon"><i class="fa-solid fa-note-sticky"></i></span>
+          <span class="input-body">
+            <span class="input-label">Notes</span>
+            <input type="text" name="notes" class="input-field" value="${esc(c.notes)}">
+          </span>
+        </label>
+        <div class="contact-edit-actions">
+          <button type="button" class="btn btn-outline" data-cancel-edit="${c.id}">Cancel</button>
+          <button type="submit" class="btn btn-glow">Save Contact</button>
+        </div>
+      </form>
+    </div>
+  `;
+}
+
+$("add-contact-btn").addEventListener("click", () => {
+  const newContact = { id: "c-" + Date.now(), name: "", role: "", company: "", phone: "", email: "", hours: "", notes: "" };
+  contactsState.unshift(newContact);
+  editingContactId = newContact.id;
+  renderContacts();
+});
+
+renderContacts();
+
+// ==========================================================================
+// AI ASSISTANT — local rule-based chatbot.
+// Reads live machine status (state.lastResult), history and saved contacts
+// to answer questions. No external AI API is called, so it works out of the
+// box with zero setup. To upgrade later: replace generateBotReply() with a
+// fetch() to your own chatbot backend and fall back to this function if
+// that request fails.
+// ==========================================================================
+function chatAppendMessage(role, html) {
+  const win = $("chat-window");
+  const wrap = document.createElement("div");
+  wrap.className = `chat-message chat-${role}`;
+  wrap.innerHTML = `
+    <span class="chat-avatar"><i class="fa-solid ${role === "user" ? "fa-user" : "fa-robot"}"></i></span>
+    <div class="chat-bubble">${html}</div>
+  `;
+  win.appendChild(wrap);
+  win.scrollTop = win.scrollHeight;
+  return wrap;
+}
+
+function chatShowTyping() {
+  const win = $("chat-window");
+  const wrap = document.createElement("div");
+  wrap.className = "chat-message chat-bot chat-typing";
+  wrap.innerHTML = `
+    <span class="chat-avatar"><i class="fa-solid fa-robot"></i></span>
+    <div class="chat-bubble"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  `;
+  win.appendChild(wrap);
+  win.scrollTop = win.scrollHeight;
+  return wrap;
+}
+
+function generateBotReply(rawText) {
+  const text = rawText.toLowerCase();
+
+  // Current machine status
+  if (/(status|current|how.*machine|health\b)/.test(text) && !/health score/.test(text)) {
+    if (!state.lastResult) {
+      return "No analysis has run yet. Head to the Dashboard and click <strong>Analyze Machine</strong> (or wait for the next MQTT reading) and I'll be able to tell you the current status.";
+    }
+    const r = state.lastResult;
+    const meta = STATUS_META[r.status];
+    return `The machine is currently reporting <strong>${meta.label}</strong> (${r.probabilityPct}% failure probability). ${r.failure_type && r.failure_type !== "No Failure" ? `Predicted failure type: <strong>${esc(r.failure_type)}</strong>.` : "No specific failure type predicted."} Health score: ${r.healthScore}/100.`;
+  }
+
+  // Health score explanation
+  if (/health score/.test(text)) {
+    const base = "The Machine Health Score is simply 100 minus the failure probability percentage — a quick, single-number read on machine condition. 100 is perfectly healthy, lower numbers mean higher predicted failure risk.";
+    if (state.lastResult) {
+      return `${base} Right now it's <strong>${state.lastResult.healthScore}/100</strong>.`;
+    }
+    return base;
+  }
+
+  // Who to contact
+  if (/(contact|technician|call|who.*repair|repair.*who|reach)/.test(text)) {
+    if (contactsState.length === 0) {
+      return `No repair contacts are saved yet. Go to the <strong>Repair Contact</strong> page and click "Add Contact" to save one.`;
+    }
+    const c = contactsState[0];
+    let reply = `For repairs, contact <strong>${esc(c.name) || "your saved technician"}</strong>${c.role ? ` (${esc(c.role)})` : ""}.`;
+    if (c.phone) reply += ` Phone: ${esc(c.phone)}.`;
+    if (c.email) reply += ` Email: ${esc(c.email)}.`;
+    if (c.hours) reply += ` Available: ${esc(c.hours)}.`;
+    if (contactsState.length > 1) reply += ` (${contactsState.length - 1} more contact${contactsState.length > 2 ? "s" : ""} saved — see the Repair Contact page.)`;
+    return reply;
+  }
+
+  // Failure-type specific recommendations
+  const failureKeys = Object.keys(RECOMMENDATIONS);
+  const matchedKey = failureKeys.find((k) => text.includes(k.toLowerCase()));
+  if (matchedKey) {
+    const steps = RECOMMENDATIONS[matchedKey];
+    return `Recommended steps for <strong>${esc(matchedKey)}</strong>:<ul>${steps.map((s) => `<li><strong>${esc(s.title)}</strong> — ${esc(s.desc)}</li>`).join("")}</ul>`;
+  }
+  if (/fix|repair|troubleshoot|what.*do/.test(text)) {
+    if (state.lastResult && state.lastResult.failure_type) {
+      const steps = RECOMMENDATIONS[state.lastResult.failure_type] || DEFAULT_RECS;
+      return `Based on the latest prediction (<strong>${esc(state.lastResult.failure_type)}</strong>), here's what to do:<ul>${steps.map((s) => `<li><strong>${esc(s.title)}</strong> — ${esc(s.desc)}</li>`).join("")}</ul>`;
+    }
+    return `Ask me about a specific failure type — for example "How do I fix a Tool Wear Failure?" — or run an analysis on the Dashboard first so I have a current reading to work from.`;
+  }
+
+  // Prediction history summary
+  if (/history|previous|past reading|trend/.test(text)) {
+    if (state.history.length === 0) return "No predictions have been logged yet this session.";
+    const critCount = state.history.filter((h) => h.status === "critical").length;
+    return `You have ${state.history.length} logged prediction${state.history.length > 1 ? "s" : ""} this session, including ${critCount} at Critical status. Check the Prediction History and Trend chart on the Dashboard for the full picture.`;
+  }
+
+  // Greetings
+  if (/^(hi|hello|hey|yo)\b/.test(text)) {
+    return "Hello! I can tell you the current machine status, explain a failure type, or pull up your saved repair contacts. What would you like to know?";
+  }
+
+  // Fallback
+  return `I'm not sure about that one. Try asking me:<ul><li>"What's the current machine status?"</li><li>"How do I fix a Power Failure?"</li><li>"Who should I contact for repairs?"</li></ul>`;
+}
+
+function sendChatMessage(text) {
+  const trimmed = text.trim();
+  if (!trimmed) return;
+
+  chatAppendMessage("user", esc(trimmed));
+  const typingBubble = chatShowTyping();
+
+  const delay = 450 + Math.random() * 400;
+  setTimeout(() => {
+    typingBubble.remove();
+    chatAppendMessage("bot", generateBotReply(trimmed));
+  }, delay);
+}
+
+$("chat-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const input = $("chat-input");
+  sendChatMessage(input.value);
+  input.value = "";
+  input.focus();
+});
+
+document.querySelectorAll(".chat-chip").forEach((chip) => {
+  chip.addEventListener("click", () => {
+    sendChatMessage(chip.getAttribute("data-q"));
+  });
+});
