@@ -149,7 +149,7 @@
       </button>
     </form>
 
-    <p class="auth-note"><i class="fa-solid fa-circle-info"></i> Accounts are stored locally in this browser for demo purposes - this is not a production authentication system.</p>
+    <p class="auth-note"><i class="fa-solid fa-circle-info"></i> Accounts are stored locally in this browser for demo purposes — this is not a production authentication system.</p>
 
     <button type="button" id="auth-back" class="auth-back"><i class="fa-solid fa-arrow-left"></i> Back to home</button>
   </div>
@@ -241,6 +241,22 @@
       <i class="fa-solid fa-rotate-left"></i><span>Reset to Defaults</span>
     </button>
   </aside>
+
+  <!-- ---------- PAGE NAV ---------- -->
+  <nav class="page-nav">
+    <button type="button" class="page-nav-btn active" data-page="dashboard">
+      <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
+    </button>
+    <button type="button" class="page-nav-btn" data-page="contact">
+      <i class="fa-solid fa-user-gear"></i><span>Repair Contact</span>
+    </button>
+    <button type="button" class="page-nav-btn" data-page="assistant">
+      <i class="fa-solid fa-robot"></i><span>AI Assistant</span>
+    </button>
+  </nav>
+
+  <!-- ================= PAGE: DASHBOARD ================= -->
+  <div id="page-dashboard" class="app-page">
 
   <!-- ---------- DASHBOARD GRID ---------- -->
   <main class="dashboard-grid">
@@ -466,6 +482,70 @@
     </div>
 
   </section>
+
+  </div>
+  <!-- ================= END PAGE: DASHBOARD ================= -->
+
+  <!-- ================= PAGE: REPAIR CONTACT ================= -->
+  <div id="page-contact" class="app-page" hidden>
+    <div class="contact-page-grid">
+
+      <section class="hud-card contact-intro">
+        <div class="panel-header">
+          <i class="fa-solid fa-user-gear"></i>
+          <h2>Repair &amp; Maintenance Contacts</h2>
+        </div>
+        <p class="contact-intro-copy">Keep your maintenance team's contact details on hand so anyone viewing an alert knows exactly who to call. Edit or add contacts below — changes are saved automatically in this browser.</p>
+        <button id="add-contact-btn" class="btn btn-glow btn-analyze">
+          <i class="fa-solid fa-user-plus"></i><span>Add Contact</span>
+        </button>
+      </section>
+
+      <section class="hud-card contact-list-card">
+        <div class="panel-header">
+          <i class="fa-solid fa-address-book"></i>
+          <h2>Saved Contacts</h2>
+        </div>
+        <div id="contact-empty" class="history-empty">No contacts saved yet — add your first repair technician above.</div>
+        <div id="contact-list" class="contact-list"></div>
+      </section>
+
+    </div>
+  </div>
+  <!-- ================= END PAGE: REPAIR CONTACT ================= -->
+
+  <!-- ================= PAGE: AI ASSISTANT ================= -->
+  <div id="page-assistant" class="app-page" hidden>
+    <section class="hud-card chat-card">
+      <div class="panel-header">
+        <i class="fa-solid fa-robot"></i>
+        <h2>PredictIQ Assistant</h2>
+      </div>
+      <p class="chat-subtitle">A local assistant that reads your live machine status, prediction history and saved contacts — no external AI service required.</p>
+
+      <div id="chat-window" class="chat-window">
+        <div class="chat-message chat-bot">
+          <span class="chat-avatar"><i class="fa-solid fa-robot"></i></span>
+          <div class="chat-bubble">Hi, I'm the PredictIQ Assistant. Ask me about the current machine status, a failure type, or who to contact for repairs.</div>
+        </div>
+      </div>
+
+      <div class="chat-chips" id="chat-chips">
+        <button type="button" class="chat-chip" data-q="What's the current machine status?">Current status?</button>
+        <button type="button" class="chat-chip" data-q="Who should I contact for repairs?">Who to contact?</button>
+        <button type="button" class="chat-chip" data-q="How do I fix a Tool Wear Failure?">Fix tool wear failure</button>
+        <button type="button" class="chat-chip" data-q="Explain the health score">Explain health score</button>
+      </div>
+
+      <form id="chat-form" class="chat-input-row">
+        <input type="text" id="chat-input" class="input-field chat-text-input" placeholder="Type a message…" autocomplete="off">
+        <button type="submit" class="btn btn-glow chat-send-btn" aria-label="Send message">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+    </section>
+  </div>
+  <!-- ================= END PAGE: AI ASSISTANT ================= -->
 
   <footer class="app-footer">
     <span>PredictIQ &copy; <span id="footer-year"></span> — Infosys Springboard Internship Project</span>
