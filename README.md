@@ -1,4 +1,4 @@
-# 🚀 AI-Powered Predictive Maintenance System
+# 🚀 Machine Learning System for Early Detection of Equipment Failure
 
 > Predict. Prevent. Perform.
 
