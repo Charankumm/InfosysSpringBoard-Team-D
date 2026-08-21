@@ -169,44 +169,60 @@ The project targets measurable business improvements such as reduced downtime an
 ## 📁 Repository Structure
 
 ```
-InfosysSpringBoard-Team-D
+InfosysSpringBoard-Team-D/
 │
-├── backend/
-│   ├── flask_application/
-│   │   ├── alerts/
-│   │   │   ├── alert_manager.py
-│   │   │   ├── config.py
-│   │   │   ├── email_alert.py
-│   │   │   └── __init__.py
-│   │   ├── app.py
-│   │   ├── routes.py
-│   │   └── utils.py
+├── Project/
 │   │
-│   ├── model_training/
-│   │   ├── ai4i2020.csv
-│   │   └── machine_failure_prediction.ipynb
+│   ├── backend/
+│   │   ├── flask_application/
+│   │   │   ├── alerts/
+│   │   │   │   ├── alert_manager.py
+│   │   │   │   ├── config.py
+│   │   │   │   ├── email_alert.py
+│   │   │   │   └── __init__.py
+│   │   │   ├── app.py
+│   │   │   ├── routes.py
+│   │   │   └── utils.py
+│   │   │
+│   │   ├── model_training/
+│   │   │   ├── ai4i2020.csv
+│   │   │   └── machine_failure_prediction.ipynb
+│   │   │
+│   │   ├── models/
+│   │   │   ├── machine_failure_model.pkl
+│   │   │   ├── failure_type_model.pkl
+│   │   │   └── label_encoder.pkl
+│   │   │
+│   │   └── requirements.txt
 │   │
-│   ├── models/
-│   │   ├── machine_failure_model.pkl
-│   │   ├── failure_type_model.pkl
-│   │   └── label_encoder.pkl
+│   ├── frontend/
+│   │   ├── assets/
+│   │   ├── index.html
+│   │   ├── style.css
+│   │   └── script.js
 │   │
-│   └── requirements.txt
+│   ├── code/
+│   ├── data/
+│   ├── datasets/
+│   ├── images/
+│   └── notebooks/
 │
-├── frontend/
-│   ├── assets/
-│   ├── index.html
-│   ├── style.css
-│   └── script.js
-│
-├── code/
-├── data/
-├── datasets/
-├── images/
-├── notebooks/
+├── Documentation/
+│   ├── PPT/
+│   │   ├── Predictive_Maintenance_1.pptx
+│   │   ├── Predictive_Maintenance_2.pptx
+│   │   ├── PredictIQ_Presentation_3.pptx
+│   │   └── PredictIQ_Presentation_4.pptx
+│   │
+│   ├── Video/
+│   │   └── Project_demo_video.mp4
+│   │
+│   └── Documents/
+│       └── Project_Report.pdf
 │
 ├── README.md
-└── .gitignore
+├── .gitignore
+└── LICENSE
 ```
 
 ---
